@@ -1,0 +1,201 @@
+version: '3.7'
+services:
+  traefik:
+    image: traefik:v1.7
+    container_name: traefik
+    restart: unless-stopped
+    command: >
+      --docker
+      --docker.watch
+      --docker.exposedbydefault=false
+      --entrypoints='Name:http Address::80 Compress:true'
+      --entrypoints='Name:https Address::443 TLS Compress:true'
+      --acme
+      --acme.email=${LE_EMAIL}
+      --acme.storage="/etc/traefik/acme.json"
+      --acme.entryPoint=https
+      --acme.dnsChallenge.provider=digitalocean
+      --acme.onhostrule=true
+      --acme.acmelogging=true
+      --logLevel=INFO
+      --accessLog
+      --api
+    networks:
+      - traefik-public
+    environment:
+      - DO_AUTH_TOKEN=${DO_AUTH_TOKEN}
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - traefik-data:/etc/traefik
+      - /etc/localtime:/etc/localtime:ro
+    labels:
+      - traefik.enable=true
+      - traefik.port=8080
+      - traefik.tags=traefik-public
+      - traefik.docker.network=traefik-public
+      - traefik.frontend.entryPoints=http,https
+      - traefik.frontend.headers.SSLRedirect=true
+      - traefik.frontend.rule=Host:traefik.${BASE_DOMAIN}
+      - traefik.frontend.auth.basic.users=${ADMIN_USER}:${ADMIN_HASHED_PASSWORD}
+
+  portainer:
+    image: portainer/portainer
+    container_name: portainer
+    restart: unless-stopped
+    command: -H unix:///var/run/docker.sock --admin-password='${ADMIN_HASHED_PASSWORD}'
+    volumes:
+      - portainer-data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      - traefik-public
+    environment:
+      - LOG_LEVEL=debug
+    labels:
+      - traefik.enable=true
+      - traefik.port=9000
+      - traefik.tags=traefik-public
+      - traefik.docker.network=traefik-public
+      - traefik.frontend.entryPoints=http,https
+      - traefik.frontend.rule=Host:portainer.${BASE_DOMAIN}
+      - traefik.frontend.headers.SSLRedirect=true
+
+  netdata:
+    image: netdata/netdata
+    container_name: netdata
+    restart: unless-stopped
+    hostname: ${BASE_DOMAIN}
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - apparmor:unconfined
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      - traefik-public
+    environment:
+      - PGID=999
+    labels:
+      - traefik.enable=true
+      - traefik.port=19999
+      - traefik.docker.network=traefik-public
+      - traefik.frontend.entryPoints=http,https
+      - traefik.frontend.headers.SSLRedirect=true
+      - traefik.frontend.rule=Host:netdata.${BASE_DOMAIN}
+      - traefik.frontend.auth.basic.users=${ADMIN_USER}:${ADMIN_HASHED_PASSWORD}
+
+  nodered:
+    image: nodered/node-red:latest
+    container_name: nodered
+    environment:
+      - TZ=Europe/Berlin
+      - NODE_RED_ENABLE_PROJECTS=true
+    networks:
+      - nodered
+      - traefik-public
+    restart: unless-stopped
+    volumes:
+      - nodered-data:/data
+    labels:
+      - traefik.enable=true
+      - traefik.port=1880
+      - traefik.protocol=http
+      - traefik.docker.network=traefik-public
+      - traefik.frontend.entryPoints=https
+      - traefik.frontend.headers.SSLRedirect=false
+      #- traefik.closed.frontend.auth.basic.users=${ADMIN_USER}:${ADMIN_HASHED_PASSWORD}
+      - traefik.closed.frontend.rule=Host:nodered.${BASE_DOMAIN}
+      - traefik.public.frontend.rule=Host:${BASE_DOMAIN};AddPrefix:/devops
+
+  mqtt:
+    image: eclipse-mosquitto
+    container_name: mqtt
+    networks:
+      - nodered
+    restart: unless-stopped
+
+  influxdb:
+    restart: unless-stopped
+    container_name: influxdb
+    image: influxdb:latest
+    volumes:
+      - influxdb-data:/var/lib/influxdb
+    networks:
+      - nodered
+    environment:
+      INFLUXDB_DB: devops
+      INFLUXDB_ADMIN_USER: nodered
+      INFLUXDB_ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      INFLUXDB_INIT_PWD: ${ADMIN_PASSWORD}
+      INFLUXDB_BIND_ADDRESS: "influxdb:8088"
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    restart: unless-stopped
+    environment:
+      - MONGO_DATA_DIR=/data/db
+      - MONGO_INITDB_DATABASE=devops
+    networks:
+      - nodered
+    volumes:
+      - mongodb-data:/data/db
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    restart: unless-stopped
+    environment:
+      GF_INSTALL_PLUGINS: grafana-clock-panel,briangann-gauge-panel,natel-plotly-panel,grafana-simple-json-datasource,grafana-piechart-panel,grafana-worldmap-panel
+      GF_SECURITY_ADMIN_USER: ${ADMIN_USER}
+      GF_SECURITY_ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      GF_SERVER_DOMAIN: grafana.${BASE_DOMAIN}
+      GF_METRICS_ENABLED: "true"
+      GF_ANALYTICS_REPORTING_ENABLED: "false"
+      GF_SERVER_ROOT_URL: "%(protocol)s://%(domain)s:%(http_port)s"
+      GF_RENDERING_SERVER_URL: http://grafana-renderer:8081/render
+      GF_RENDERING_CALLBACK_URL: http://grafana:3000/
+      GF_LOG_FILTERS: rendering:debug
+    networks:
+      - nodered
+      - traefik-public
+    volumes:
+      - grafana-data:/var/lib/grafana
+    labels:
+      - traefik.frontend.rule=Host:grafana.${BASE_DOMAIN}
+      - traefik.enable=true
+      - traefik.port=3000
+      - traefik.protocol=http
+      - traefik.docker.network=traefik-public
+      - traefik.frontend.entryPoints=http,https
+      - traefik.frontend.headers.SSLRedirect=true
+      - traefik.frontend.auth.basic.users=${ADMIN_USER}:${ADMIN_HASHED_PASSWORD}
+
+  grafana-renderer:
+    image: grafana/grafana-image-renderer:latest
+    container_name: grafana-renderer
+    restart: unless-stopped
+    networks:
+      - nodered
+    environment:
+      IGNORE_HTTPS_ERRORS: "true"
+      ENABLE_METRICS: "true"
+
+networks:
+  nodered:
+  traefik-public:
+    external: true
+
+volumes:
+  portainer-data:
+  traefik-data:
+  nodered-data:
+  influxdb-data:
+  grafana-data:
+  mongodb-data:
