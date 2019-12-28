@@ -3,8 +3,11 @@ devops-projects
 
 ### About
 
-Dies ist die Datei README.md Ihres Projekts. Es hilft den Benutzern zu verstehen, was Ihr
-Projekt macht, wie man es verwendet und alles andere, was sie vielleicht wissen müssen.
+This tool is built with Node-Red and MongoDB. Behind the curtains, InfluxDB and Grafana are collecting statistics about the projects scraped to learn about DevOps adoption in the German Industry over time.
+
+The stack is served by Traefik running on Docker.
+
+The Index will be updated every 30 Minutes and Projects will be kept in the Index for 10 days before they expire.
 
 ### Deployment
 * Create your .env file: `mv .env.example .env`
