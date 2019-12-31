@@ -22,3 +22,8 @@ docker-machine ssh $BASE_DOMAIN docker network create traefik-public
 docker-compose pull
 docker-compose up -d
 ```
+
+### Register Gitlab Runner
+```
+docker exec -it gitlab-runner gitlab-runner register -n --url https://gitlab.com/ --registration-token $YOURTOKEN --executor docker --docker-image "docker:latest" --docker-privileged --docker-volumes /var/run/docker.sock:/var/run/docker.sock --tag-list "docker,dind-cache" --run-untagged="true"
+```

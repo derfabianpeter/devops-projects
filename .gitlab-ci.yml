@@ -8,8 +8,6 @@ stages:
 variables:
   DOCKER_DRIVER: overlay2
   DOCKER_TLS_CERTDIR: ""
-  DOCKER_REGISTRY: docker.io
-  CI_REGISTRY_IMAGE: index.docker.io/derfabianpeter/profile
 
 .deployment: &deployment |
   # Setup SSH deploy keys
@@ -63,15 +61,15 @@ Release:
   only:
     - master
 
-Deploy:
-  stage: deploy
-  image: tiangolo/docker-with-compose
-  script: 
-    - *deployment
-    - DOCKER_HOST=ssh://${DEPLOYMENT_TARGET} docker-compose -f ci/docker-compose.yml up --remove-orphans -d
-  allow_failure: false
-  only:
-    - master
-  environment:
-    name: production
-    url: https://devops-projects.de
+# Deploy:
+#   stage: deploy
+#   image: tiangolo/docker-with-compose
+#   script: 
+#     - *deployment
+#     - DOCKER_HOST=ssh://${DEPLOYMENT_TARGET} docker-compose -f ci/docker-compose.yml up --remove-orphans -d
+#   allow_failure: false
+#   only:
+#     - master
+#   environment:
+#     name: production
+#     url: https://devops-projects.de
