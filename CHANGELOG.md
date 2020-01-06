@@ -2,6 +2,17 @@
 
 <!--- next entry here -->
 
+## 0.2.0
+2020-01-06
+
+### Features
+
+- Added Telegram Subscription Button (b9712309688f1c84933ec8fb4f4ffbec774562c5)
+
+### Fixes
+
+- re-scraped freelance.de. There actually are interesting projects on it ;) (1340d8786bf50171bdd48495f06de4ec862174d6)
+
 ## 0.1.0
 2020-01-04
 
