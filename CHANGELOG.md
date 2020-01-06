@@ -2,6 +2,13 @@
 
 <!--- next entry here -->
 
+## 0.2.1
+2020-01-06
+
+### Fixes
+
+- re-styled lists (d1d777da8a9d3ced95eb250dfd483d4e94b7b5e8)
+
 ## 0.2.0
 2020-01-06
 
