@@ -2,6 +2,13 @@
 
 <!--- next entry here -->
 
+## 0.3.1
+2020-01-06
+
+### Fixes
+
+- Slack integration, message routing (584ae403150e37476165d08132543da5447abaef)
+
 ## 0.3.0
 2020-01-06
 
