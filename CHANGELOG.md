@@ -2,6 +2,14 @@
 
 <!--- next entry here -->
 
+## 0.3.0
+2020-01-06
+
+### Features
+
+- added Slack Bot (6a4b83987d6058f643b20750896a5745b6d7e3e5)
+- Slack Bot + App in Slack App Directory (73efef907b7010d6c0200ac063728a9ab20f92d5)
+
 ## 0.2.1
 2020-01-06
 
