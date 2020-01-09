@@ -2,6 +2,13 @@
 
 <!--- next entry here -->
 
+## 0.4.1
+2020-01-09
+
+### Fixes
+
+- enabled unique index on mongo to avoid duplicate `url`s (e48c09c279fdbbaae602a1f3f44a9f54a3dc1eb5)
+
 ## 0.4.0
 2020-01-07
 
