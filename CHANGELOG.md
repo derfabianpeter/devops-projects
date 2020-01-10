@@ -2,6 +2,13 @@
 
 <!--- next entry here -->
 
+## 0.5.0
+2020-01-10
+
+### Features
+
+- added project/messages counter to homepage (f7fb3608abff9ddde94fc81a2779b1eb6f443ab8)
+
 ## 0.4.1
 2020-01-09
 
