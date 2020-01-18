@@ -2,6 +2,13 @@
 
 <!--- next entry here -->
 
+## 0.7.0
+2020-01-18
+
+### Features
+
+- stuff (f4994783c6eea57cff92c6eefce81763cea6ddfe)
+
 ## 0.6.0
 2020-01-12
 
