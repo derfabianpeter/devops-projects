@@ -2,6 +2,13 @@
 
 <!--- next entry here -->
 
+## 0.6.0
+2020-01-12
+
+### Features
+
+- finished Submission Broker (7ae029e42b14499f25e5bdadd551911a68237b38)
+
 ## 0.5.0
 2020-01-10
 
