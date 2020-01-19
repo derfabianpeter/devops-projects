@@ -2,6 +2,13 @@
 
 <!--- next entry here -->
 
+## 0.9.0
+2020-01-19
+
+### Features
+
+- tag-parser (ce6221f32b96326276a333eca1826aadf422c8da)
+
 ## 0.8.0
 2020-01-19
 
