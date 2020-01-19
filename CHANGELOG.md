@@ -2,6 +2,14 @@
 
 <!--- next entry here -->
 
+## 0.8.0
+2020-01-19
+
+### Features
+
+- removed /latest endpoint (4871d83030a10eaeccaeb50b8bdc11e1f6809959)
+- restructure mesaurements subscriptions (a5815b0700e7766f95690db0bdff2717965ac2c6)
+
 ## 0.7.2
 2020-01-19
 
