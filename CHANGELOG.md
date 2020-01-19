@@ -2,6 +2,13 @@
 
 <!--- next entry here -->
 
+## 0.7.2
+2020-01-19
+
+### Fixes
+
+- improved docs (76d81c2da0ea2180096f1fea46db315273e9fe7f)
+
 ## 0.7.1
 2020-01-18
 
