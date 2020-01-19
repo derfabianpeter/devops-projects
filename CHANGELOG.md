@@ -2,6 +2,13 @@
 
 <!--- next entry here -->
 
+## 0.7.1
+2020-01-18
+
+### Fixes
+
+- measurements (c48c6490a4bca7c007ea49b03a8c40ffbd119a96)
+
 ## 0.7.0
 2020-01-18
 
