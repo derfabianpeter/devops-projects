@@ -2,6 +2,13 @@
 
 <!--- next entry here -->
 
+## 0.10.0
+2020-01-23
+
+### Features
+
+- fine-tune freelancermap; only accept direct customer projects (98beb139c32fc33c4d8054a8878d6a1fea5c9e88)
+
 ## 0.9.1
 2020-01-19
 
