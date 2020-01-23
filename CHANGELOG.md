@@ -2,6 +2,13 @@
 
 <!--- next entry here -->
 
+## 0.9.1
+2020-01-19
+
+### Fixes
+
+- slack integration [TODO: docs] (4f701ec53bc4115d91f7881423c674ab4cbff5b3)
+
 ## 0.9.0
 2020-01-19
 
